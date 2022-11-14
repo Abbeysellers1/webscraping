@@ -1,7 +1,8 @@
-# pip install requests (to be able to get HTML pages and load them into Python)
-# pip install bs4 (for beautifulsoup - python tool to parse HTML)
+#pip install requests #(to be able to get HTML pages and load them into Python)
+#pip install bs4 # (for beautifulsoup - python tool to parse HTML)
 
 
+from unittest import skip
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
@@ -19,7 +20,68 @@ url = 'https://www.worldometers.info/coronavirus/country/us'
 # Request in case 404 Forbidden error
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
 
+req = Request(url, headers=headers)
 
+webpage=urlopen(req).read()
+
+soup = BeautifulSoup(webpage, 'html.parser')
+
+table_rows= soup.findAll('tr')
+
+state_worst_death=''
+state_best_death=''
+high_death_ratio= 0.0
+low_death_ratio= 100.0
+
+state_best_test=''
+state_worst_test=''
+high_test_ratio=0.0
+low_test_ratio=100.0
+
+if percent_death > high_death_ratio:
+    state_worst_death=state
+    high_death_ratio= percent_death
+
+if percent_death < low_death_ratio:
+    state_best_death = state
+    low_death_ratio = percent_death
+
+if tests > high_test_ratio:
+    state_best_test = state
+    high_test_ratio = tests
+
+if tests < low_test_ratio:
+    state_worst_test = state
+    low_test_ratio = tests
+
+
+
+for row in table_rows[2:51]:
+    td = row.findAll('td')
+    state=(td[1].text).replace(',','')
+    deaths= int((td[4].text).replace(',',''))
+    cases= int((td[2].text).replace(',',''))
+    percent_death= round((deaths/cases)*100,2)
+    tests= int((td[10].text).replace(',',''))
+    population=int((td[12].text).replace(',',''))
+
+    print(f"State Name: {state}")
+    print(f"Death rate: {percent_death}%")
+    print(f"Total Deaths: {deaths}")
+    print(f"Total Cases: {cases}")
+    print(f"Total tests: {tests}")
+    print(f"Population: {population}")
+    print()
+    print()
+    print()
+
+print(f'State with worst death rate: {state_worst_death}')
+print(f'Death rate: {high_death_ratio}')
+print()
+print()
+
+print(f'State with the best death rate: {state_best_death}')
+print
 
 
 
