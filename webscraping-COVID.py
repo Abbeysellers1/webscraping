@@ -38,6 +38,7 @@ state_worst_test=''
 high_test_ratio=0.0
 low_test_ratio=100.0
 
+
 for row in table_rows[2:51]:
     td = row.findAll('td')
     state=(td[1].text).replace('\n','')
