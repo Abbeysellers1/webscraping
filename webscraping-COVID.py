@@ -3,9 +3,9 @@
 
 
 from unittest import skip
-from urllib.request import urlopen, Request
-from bs4 import BeautifulSoup
+from urllib.request import Request, urlopen
 
+from bs4 import BeautifulSoup
 
 ##############FOR MACS THAT HAVE ERRORS LOOK HERE################
 ## https://timonweb.com/tutorials/fixing-certificate_verify_failed-error-when-trying-requests_html-out-on-mac/
@@ -38,32 +38,33 @@ state_worst_test=''
 high_test_ratio=0.0
 low_test_ratio=100.0
 
-if percent_death > high_death_ratio:
-    state_worst_death=state
-    high_death_ratio= percent_death
-
-if percent_death < low_death_ratio:
-    state_best_death = state
-    low_death_ratio = percent_death
-
-if tests > high_test_ratio:
-    state_best_test = state
-    high_test_ratio = tests
-
-if tests < low_test_ratio:
-    state_worst_test = state
-    low_test_ratio = tests
-
-
-
 for row in table_rows[2:51]:
     td = row.findAll('td')
-    state=(td[1].text).replace(',','')
+    state=(td[1].text).replace('\n','')
     deaths= int((td[4].text).replace(',',''))
     cases= int((td[2].text).replace(',',''))
-    percent_death= round((deaths/cases)*100,2)
     tests= int((td[10].text).replace(',',''))
     population=int((td[12].text).replace(',',''))
+
+    percent_death= round((deaths/cases)*100,2)
+    test_rate= round((tests/population)*100,2)
+
+    if percent_death > high_death_ratio:
+        state_worst_death=state
+        high_death_ratio= percent_death
+
+    if percent_death < low_death_ratio:
+        state_best_death = state
+        low_death_ratio = percent_death
+
+    if tests > high_test_ratio:
+        state_best_test = state
+        high_test_ratio = test_rate
+
+    if tests < low_test_ratio:
+        state_worst_test = state
+        low_test_ratio = test_rate
+
 
     print(f"State Name: {state}")
     print(f"Death rate: {percent_death}%")
@@ -73,15 +74,26 @@ for row in table_rows[2:51]:
     print(f"Population: {population}")
     print()
     print()
-    print()
+
 
 print(f'State with worst death rate: {state_worst_death}')
-print(f'Death rate: {high_death_ratio}')
-print()
+print(f'Death rate: {high_death_ratio}%')
 print()
 
 print(f'State with the best death rate: {state_best_death}')
-print
+print(f'Death rate: {low_death_ratio}%')
+
+print()
+
+
+print(f'State with the worst test rate: {state_worst_test}')
+print(f'Test rate: {low_test_ratio}%')
+
+print()
+
+
+print(f'State with the best test rate: {state_best_test}')
+print(f'Test rate: {high_test_ratio}%')
 
 
 
